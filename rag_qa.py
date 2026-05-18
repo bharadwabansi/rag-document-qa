@@ -12,7 +12,7 @@ load_dotenv()
 
 def load_vector_store(save_path: str = "faiss_index"):
     """Load the FAISS vector store we built in rag_pipeline.py"""
-    print("\n📂 Loading vector store...")
+    print("\nLoading vector store...")
 
     embeddings = HuggingFaceEmbeddings(
         model_name="all-MiniLM-L6-v2",
@@ -23,10 +23,10 @@ def load_vector_store(save_path: str = "faiss_index"):
     vector_store = FAISS.load_local(
         save_path,
         embeddings,
-        allow_dangerous_deserialization=True  # safe — we created this file ourselves
+        allow_dangerous_deserialization=True  # safe
     )
 
-    print("   ✅ Vector store loaded successfully")
+    print("  Vector store loaded successfully")
     return vector_store
 
 
@@ -37,13 +37,13 @@ def load_llm():
     print("\n🤖 Connecting to Groq LLM (Llama 3, free)...")
 
     llm = ChatGroq(
-        model="llama-3.1-8b-instant",        # free, fast, good quality
+        model="llama-3.1-8b-instant",        
         groq_api_key=os.getenv("GROQ_API_KEY"),
         temperature=0.2,               # lower = more factual, less creative
         max_tokens=1024
     )
 
-    print("   ✅ Groq LLM ready")
+    print("  Groq LLM ready")
     return llm
 
 
@@ -102,7 +102,7 @@ def build_qa_chain(vector_store, llm):
         }
     )
 
-    print("   ✅ RAG chain ready")
+    print("  RAG chain ready")
     return qa_chain
 
 
@@ -111,17 +111,17 @@ def build_qa_chain(vector_store, llm):
 def ask_question(qa_chain, question: str):
     """Ask a question and display the answer with sources."""
     print(f"\n{'='*55}")
-    print(f"❓ Question: {question}")
+    print(f"Question: {question}")
     print(f"{'='*55}")
 
     result = qa_chain.invoke({"query": question})
 
     # Print the answer
-    print(f"\n💬 Answer:\n")
+    print(f"\nAnswer:\n")
     print(f"   {result['result']}\n")
 
     # Print source pages used
-    print("📄 Sources used:")
+    print("Sources used:")
     seen_pages = set()
     for doc in result["source_documents"]:
         page = doc.metadata.get("page", "?")
@@ -143,7 +143,7 @@ if __name__ == "__main__":
     qa_chain     = build_qa_chain(vector_store, llm)
 
     print("\n" + "="*55)
-    print("🎉 RAG Q&A ready! Ask anything about your document.")
+    print(" RAG Q&A ready! Ask anything about your document.")
     print("   Type 'quit' to exit")
     print("="*55)
 
@@ -157,11 +157,11 @@ if __name__ == "__main__":
         ask_question(qa_chain, q)
 
     # Then go interactive — user types their own questions
-    print("\n💬 Now ask your own questions:\n")
+    print("\n Now ask your own questions:\n")
     while True:
         user_q = input("You: ").strip()
         if user_q.lower() in ["quit", "exit", "q"]:
-            print("\n👋 Bye! Push your code to GitHub before closing.\n")
+            print("\n Bye!\n")
             break
         if user_q:
             ask_question(qa_chain, user_q)
